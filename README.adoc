@@ -1,0 +1,8 @@
+How to setup the Raspberry Pi
+
+Edit the hosts file with the correct ip address for your raspberry pi
+and the run
+----
+ $ ansible-playbook -i hosts setup.yml
+----
+

@@ -1,0 +1,32 @@
+- name: We are setting our new hostname.
+  hostname: name={{ hostname }}
+- name: Install the basics
+  apt: pkg={{ item }}
+  with_items:
+    - avahi-daemon
+    - netatalk
+    - tmux
+    - i2c-tools
+    - python-smbus
+    - vim   
+    - git 
+    - samba 
+    - samba-common-bin
+    - rpi-update
+- name: ensure avahi-daemon is running (and enable it at boot)
+  service: name=avahi-daemon state=started enabled=yes
+- name: ensure netatalk is running (and enable it at boot)
+  service: name=netatalk state=started enabled=yes
+- name: Configure wifi
+  lineinfile:
+    dest: /etc/wpa_supplicant/wpa_supplicant.conf 
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^network={', line: 'network={' }
+    - { regexp: '^ssid', line: 'ssid="{{wifi_ssid}}"' }
+    - { regexp: '^pskx', line: 'psk="{{wifi_password}}"' }
+    - { regexp: '^}', line: '}' }
+  when: wifi_password != ''
+- name: reboot the kodi
+  command: /sbin/shutdown -r now
