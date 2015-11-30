@@ -1,4 +1,32 @@
-How to setup the Raspberry Pi
+== How to setup the Raspberry Pi from OSX
+.This tutorial/ansible script provisions a raspberry pi
+
+=== License
+The MIT License (MIT).  See LICENSE.adoc
+
+.Prepare Raspberry Pi
+* Format SD card as FAT32
+----
+    $ diskutil list
+    $ sudo diskutil eraseDisk FAT32 NAME MBRFormat /dev/disk<disk# from diskutil>
+----
+  - Unmount SD card
+----
+   $ diskutil unmountDisk /dev/disk<disk# from diskutil>
+----
+  - Copy the data to your SD card
+----
+   $ sudo dd bs=1m if=image.img of=/dev/disk<disk# from diskutil>
+----
+  - After the `dd` command finishes, eject the card
+----
+   $ sudo diskutil eject /dev/disk<disk# from diskutil>
+----
+
+.Find the raspberry with (you can install nmap with macports)
+----
+ $ sudo nmap -sP 192.168.2.0/24
+----
 
 Edit the hosts file with the correct ip address for your raspberry pi
 and the run

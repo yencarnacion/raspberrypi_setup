@@ -25,8 +25,19 @@
   with_items:
     - { regexp: '^network={', line: 'network={' }
     - { regexp: '^ssid', line: 'ssid="{{wifi_ssid}}"' }
-    - { regexp: '^pskx', line: 'psk="{{wifi_password}}"' }
+    - { regexp: '^psk', line: 'psk="{{wifi_password}}"' }
     - { regexp: '^}', line: '}' }
   when: wifi_password != ''
-- name: reboot the kodi
-  command: /sbin/shutdown -r now
+- name: set to runlevel 3 by default
+  command: /bin/systemctl set-default -f multi-user.target
+- name: resize filesystem
+  command: /sbin/resize2fs /dev/mmcblk0p2
+- name: reboot raspberri pi
+  shell: sleep 5s && sudo /sbin/shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+- name: waiting for raspberry pi to come back
+  local_action: wait_for port=22 host="{{ ansible_ssh_host | default(inventory_hostname) }}" delay=10
+                state=started
+  sudo: false
