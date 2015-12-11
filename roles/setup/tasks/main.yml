@@ -31,7 +31,14 @@
 - name: set to runlevel 3 by default
   command: /bin/systemctl set-default -f multi-user.target
 - name: resize filesystem
-  command: /sbin/resize2fs /dev/mmcblk0p2
+  script: expandRPIfs.sh
+- name: configure so that pi sets correct time at boot
+  lineinfile:
+    dest: /etc/rc.local
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^ntpd ', line: 'ntpd -gq' }
 - name: reboot raspberri pi
   shell: sleep 5s && sudo /sbin/shutdown -r now
   async: 1
