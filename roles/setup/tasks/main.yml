@@ -28,6 +28,22 @@
     - { regexp: '^psk', line: 'psk="{{wifi_password}}"' }
     - { regexp: '^}', line: '}' }
   when: wifi_password != ''
+- name: Configure MPG2 license
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^decode_MPG2', line: '{{decode_MPG2}}' }
+  when: decode_MPG2 != ''
+- name: Configure WVC1 license
+  lineinfile:
+    dest: /boot/config.txt
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^decode_WVC1', line: '{{decode_WVC1}}' }
+  when: decode_WVC1 != '' 
 - name: set to runlevel 3 by default
   command: /bin/systemctl set-default -f multi-user.target
 - name: resize filesystem
